@@ -1,0 +1,587 @@
+{
+  "id": 1777317760,
+  "codec": "frappe",
+  "task": "encode_complexity",
+  "dataset": "danjacobellis/kodak",
+  "input_resolution": [
+    512,
+    512
+  ],
+  "n_images": 24,
+  "channel_counts": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
+  "stages": [
+    "analysis",
+    "transfer",
+    "store"
+  ],
+  "config": {
+    "weights": {
+      "repo_id": "danjacobellis/FRAPPE",
+      "subdir": "FRAPPE",
+      "weights_filename": "FRAPPE_pytorch_model.safetensors",
+      "config_filename": "config.json",
+      "n_trained": 21
+    },
+    "dtype": "torch.float32",
+    "device": "cuda:2",
+    "linear_input": false,
+    "max_ps_at_n_trained": 32,
+    "latent_arrangement": {
+      "module_path": "/home/dgj335/g/lib/python3.12/site-packages/compressors/frappe/entropy_coding.py",
+      "source_sha256": "689c0e37ba49aa9b3798a0d110141e56d9b56994150f650bf52fb173ba1b99e3",
+      "functions": [
+        "arrange_latents",
+        "unarrange_latents"
+      ]
+    },
+    "entropy_coding": {
+      "module_path": "/home/dgj335/g/lib/python3.12/site-packages/compressors/frappe/entropy_coding.py",
+      "source_sha256": "689c0e37ba49aa9b3798a0d110141e56d9b56994150f650bf52fb173ba1b99e3",
+      "functions": [
+        "encode_latents",
+        "decode_latents"
+      ],
+      "source": "\"\"\"Default latent arrangement and entropy coding for FRAPPE.\n\nFour module-level functions form the contract used by\n:mod:`compressors.frappe.evaluate_rate_distortion`::\n\n    arrange_latents(latents) -> ArrangedLatents\n    unarrange_latents(arranged, scale_groups) -> list[Tensor]\n    encode_latents(arranged) -> bytes\n    decode_latents(blob) -> ArrangedLatents\n\nAny user-supplied Python file that exposes these four names with matching\nsignatures can be substituted via the harness's ``--latent-module`` /\n``--entropy-module`` flags. ``ArrangedLatents`` is whatever opaque type the\narrangement produces; the entropy-coding side does not have to be agnostic\nacross arrangements.\n\nThe default implementation reproduces FRAPPE.ipynb's per-scale JPEG-LS\nbehavior: each scale's int8 latent ``(1, C, H, W)`` is reshaped to\n``(C * H, W)`` and saved as a single grayscale JPEG-LS image. The\nresulting blob concatenates per-scale JPEG-LS streams, each preceded by a\n4-byte big-endian length, so :func:`decode_latents` is fully\nself-describing \u2014 the caller does not need to supply per-scale shape\nmetadata to read it back.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport io\nimport struct\n\nimport PIL.Image\nimport pillow_jpls  # noqa: F401 -- registers the JPEG-LS plugin with PIL\nimport torch\nfrom torchvision.transforms.v2.functional import pil_to_tensor, to_pil_image\n\n\n# Type alias. The default arrangement is a list of 2D int8 tensors, one per\n# scale, each shaped ``(C * H, W)``.\nArrangedLatents = list\n\n\ndef arrange_latents(latents):\n    \"\"\"Per-scale 2D reshape.\n\n    Each input latent has shape ``(1, C, H, W)`` (int8, on any device).\n    It is reshaped to ``(C * H, W)`` and moved to CPU \u2014 the same layout\n    used in FRAPPE.ipynb's ``compute_bpp`` so JPEG-LS sees a single\n    grayscale image per scale.\n    \"\"\"\n    arranged = []\n    for z in latents:\n        if z.dim() != 4 or z.shape[0] != 1:\n            raise ValueError(f\"Expected (1, C, H, W) latent, got shape {tuple(z.shape)}\")\n        C, H, W = z.shape[1], z.shape[2], z.shape[3]\n        arranged.append(z[0].reshape(C * H, W).contiguous().cpu())\n    return arranged\n\n\ndef unarrange_latents(arranged, scale_groups):\n    \"\"\"Inverse of :func:`arrange_latents`.\n\n    ``scale_groups`` is the ``(ps_s, start, end)`` list from\n    :class:`compressors.frappe.model.MergedAutoencoder`. We pull\n    ``C = end - start`` per scale and derive ``H`` from the arranged\n    tensor's row count.\n    \"\"\"\n    if len(arranged) != len(scale_groups):\n        raise ValueError(\n            f\"Got {len(arranged)} arranged scales for {len(scale_groups)} scale groups\"\n        )\n    latents = []\n    for z_2d, (_, start, end) in zip(arranged, scale_groups):\n        C = end - start\n        rows, W = z_2d.shape\n        if rows % C != 0:\n            raise ValueError(f\"Cannot split {rows} rows evenly into {C} channels\")\n        H = rows // C\n        latents.append(z_2d.reshape(1, C, H, W))\n    return latents\n\n\ndef encode_latents(arranged):\n    \"\"\"Encode each per-scale int8 2D tensor as a length-prefixed JPEG-LS stream.\n\n    Blob layout::\n\n        [4-byte BE length][JPEG-LS bytes]   (one chunk per scale)\n\n    The reader walks until the buffer is exhausted, so the number of\n    scales is implicit.\n    \"\"\"\n    chunks = []\n    for z_2d in arranged:\n        # JPEG-LS handles 8-bit unsigned grayscale; shift int8 [-127, 127]\n        # to uint8 [0, 254] before saving and back on decode.\n        u8 = (z_2d.cpu().to(torch.long) + 127).to(torch.uint8)\n        buf = io.BytesIO()\n        to_pil_image(u8).save(buf, format='JPEG-LS')\n        data = buf.getvalue()\n        chunks.append(struct.pack('>I', len(data)))\n        chunks.append(data)\n    return b''.join(chunks)\n\n\ndef decode_latents(blob):\n    \"\"\"Inverse of :func:`encode_latents`.\n\n    Reads length-prefixed JPEG-LS streams from ``blob`` and returns the\n    per-scale 2D int8 tensors. Each JPEG-LS stream carries its own\n    ``(rows, cols)`` header, and the chunk boundaries are recovered from\n    the length prefixes.\n    \"\"\"\n    arranged = []\n    offset = 0\n    n = len(blob)\n    while offset < n:\n        if offset + 4 > n:\n            raise ValueError(\"Truncated blob: missing 4-byte length prefix\")\n        (length,) = struct.unpack_from('>I', blob, offset)\n        offset += 4\n        if offset + length > n:\n            raise ValueError(\n                f\"Truncated blob: declared chunk of {length} bytes overruns buffer\"\n            )\n        img = PIL.Image.open(io.BytesIO(blob[offset:offset + length]))\n        img.load()\n        offset += length\n        u8 = pil_to_tensor(img)[0]  # (H, W) uint8\n        arranged.append((u8.to(torch.long) - 127).to(torch.int8))\n    return arranged\n"
+    }
+  },
+  "testbed": {
+    "hostname": "ecen-a94017",
+    "os": "Linux 6.8.0-107-generic",
+    "python_version": "3.12.3",
+    "torch_version": "2.11.0+cu130",
+    "device": "cuda:2",
+    "n_warmup": 1,
+    "n_measurement": 5,
+    "cpu_model": "AMD EPYC 9354 32-Core Processor",
+    "accelerator_name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+    "cuda_version": "13.0"
+  },
+  "results": {
+    "1": {
+      "throughput": {
+        "median_MPx_per_s": 589.9140392860169,
+        "mean_MPx_per_s": 563.5899497301854,
+        "total_per_image": {
+          "median": 0.00044437660835683346,
+          "mean": 0.00046513249593166015
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.00019797543063759804,
+          "mean": 0.00022603775141760707
+        },
+        "transfer": {
+          "median": 0.00013300101272761822,
+          "mean": 0.00011152210645377636
+        },
+        "store": {
+          "median": 0.00011246500071138144,
+          "mean": 0.0001275726380602767
+        }
+      }
+    },
+    "2": {
+      "throughput": {
+        "median_MPx_per_s": 845.9913889375093,
+        "mean_MPx_per_s": 770.7053321772878,
+        "total_per_image": {
+          "median": 0.0003098660381510854,
+          "mean": 0.00034013518403905134
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.00017097999807447195,
+          "mean": 0.00019206055634034177
+        },
+        "transfer": {
+          "median": 2.2645574063062668e-05,
+          "mean": 2.4500365058581033e-05
+        },
+        "store": {
+          "median": 0.00011444010306149721,
+          "mean": 0.00012357426264012852
+        }
+      }
+    },
+    "3": {
+      "throughput": {
+        "median_MPx_per_s": 832.0830581716372,
+        "mean_MPx_per_s": 771.5124118877704,
+        "total_per_image": {
+          "median": 0.00031504547223448753,
+          "mean": 0.00033977936836890874
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.00017132051289081573,
+          "mean": 0.00018663767841644585
+        },
+        "transfer": {
+          "median": 2.273509744554758e-05,
+          "mean": 2.5347659053901832e-05
+        },
+        "store": {
+          "median": 0.00011927052401006222,
+          "mean": 0.00012779403089856108
+        }
+      }
+    },
+    "4": {
+      "throughput": {
+        "median_MPx_per_s": 479.97560980338176,
+        "mean_MPx_per_s": 479.4476607668515,
+        "total_per_image": {
+          "median": 0.0005461610853672028,
+          "mean": 0.0005467624966210375
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.00030959618743509054,
+          "mean": 0.0003133450149713705
+        },
+        "transfer": {
+          "median": 3.195996396243572e-05,
+          "mean": 3.2234091001252334e-05
+        },
+        "store": {
+          "median": 0.000199571019038558,
+          "mean": 0.0002011833906484147
+        }
+      }
+    },
+    "5": {
+      "throughput": {
+        "median_MPx_per_s": 501.0620285571219,
+        "mean_MPx_per_s": 500.3711038630656,
+        "total_per_image": {
+          "median": 0.0005231767427176237,
+          "mean": 0.0005238991579972208
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0002779754577204585,
+          "mean": 0.00028110362278918426
+        },
+        "transfer": {
+          "median": 3.2559968531131744e-05,
+          "mean": 3.329194344890614e-05
+        },
+        "store": {
+          "median": 0.0002074454678222537,
+          "mean": 0.00020950359175913035
+        }
+      }
+    },
+    "6": {
+      "throughput": {
+        "median_MPx_per_s": 464.6442418785776,
+        "mean_MPx_per_s": 464.3487712991374,
+        "total_per_image": {
+          "median": 0.0005641821771860123,
+          "mean": 0.0005645411729346961
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0002806109841912985,
+          "mean": 0.0002921405811018
+        },
+        "transfer": {
+          "median": 3.302004188299179e-05,
+          "mean": 3.41009465046227e-05
+        },
+        "store": {
+          "median": 0.00023285590577870607,
+          "mean": 0.00023829964532827338
+        }
+      }
+    },
+    "7": {
+      "throughput": {
+        "median_MPx_per_s": 442.31252859184946,
+        "mean_MPx_per_s": 443.81274831141,
+        "total_per_image": {
+          "median": 0.0005926669109612703,
+          "mean": 0.0005906635196879506
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.00028433604165911674,
+          "mean": 0.0002956595679279417
+        },
+        "transfer": {
+          "median": 3.3215503208339214e-05,
+          "mean": 3.426151815801859e-05
+        },
+        "store": {
+          "median": 0.0002574354875832796,
+          "mean": 0.00026074243360199036
+        }
+      }
+    },
+    "8": {
+      "throughput": {
+        "median_MPx_per_s": 433.72822039768016,
+        "mean_MPx_per_s": 432.0059743536668,
+        "total_per_image": {
+          "median": 0.0006043969187885523,
+          "mean": 0.0006068064229718099
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0002845803974196315,
+          "mean": 0.00029659758826407293
+        },
+        "transfer": {
+          "median": 3.328011371195316e-05,
+          "mean": 3.480633992391328e-05
+        },
+        "store": {
+          "median": 0.0002709110267460346,
+          "mean": 0.00027540249478382367
+        }
+      }
+    },
+    "9": {
+      "throughput": {
+        "median_MPx_per_s": 425.9581815804847,
+        "mean_MPx_per_s": 423.58744447155703,
+        "total_per_image": {
+          "median": 0.0006154219154268503,
+          "mean": 0.0006188663130160422
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.00028521602507680655,
+          "mean": 0.0002944511691263566
+        },
+        "transfer": {
+          "median": 3.337999805808067e-05,
+          "mean": 3.443392342887819e-05
+        },
+        "store": {
+          "median": 0.0002899209503084421,
+          "mean": 0.0002899812204608073
+        }
+      }
+    },
+    "10": {
+      "throughput": {
+        "median_MPx_per_s": 302.55378548793055,
+        "mean_MPx_per_s": 302.3168644725339,
+        "total_per_image": {
+          "median": 0.0008664376800879836,
+          "mean": 0.0008671166937953482
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.00043347151950001717,
+          "mean": 0.00043932967819273474
+        },
+        "transfer": {
+          "median": 4.349043592810631e-05,
+          "mean": 4.4899135051916046e-05
+        },
+        "store": {
+          "median": 0.00037603150121867657,
+          "mean": 0.00038288788055069746
+        }
+      }
+    },
+    "11": {
+      "throughput": {
+        "median_MPx_per_s": 297.285080373156,
+        "mean_MPx_per_s": 295.6106545002533,
+        "total_per_image": {
+          "median": 0.0008817933266982436,
+          "mean": 0.0008867880639930566
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0004161819815635681,
+          "mean": 0.000424602982820943
+        },
+        "transfer": {
+          "median": 4.389055538922548e-05,
+          "mean": 4.580653233764072e-05
+        },
+        "store": {
+          "median": 0.00040701148100197315,
+          "mean": 0.0004163785488344729
+        }
+      }
+    },
+    "12": {
+      "throughput": {
+        "median_MPx_per_s": 293.75055538861005,
+        "mean_MPx_per_s": 292.3975018392195,
+        "total_per_image": {
+          "median": 0.0008924034191295505,
+          "mean": 0.0008965329674538225
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0003953359555453062,
+          "mean": 0.0004063835930234442
+        },
+        "transfer": {
+          "median": 4.4345040805637836e-05,
+          "mean": 4.6741498711829386e-05
+        },
+        "store": {
+          "median": 0.0004362015752121806,
+          "mean": 0.0004434078757185489
+        }
+      }
+    },
+    "13": {
+      "throughput": {
+        "median_MPx_per_s": 197.3240423027141,
+        "mean_MPx_per_s": 195.02203405208857,
+        "total_per_image": {
+          "median": 0.0013284949818626046,
+          "mean": 0.001344176319738229
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0005147319752722979,
+          "mean": 0.0005173525423742831
+        },
+        "transfer": {
+          "median": 5.5435579270124435e-05,
+          "mean": 5.7570122104759015e-05
+        },
+        "store": {
+          "median": 0.0007565129781141877,
+          "mean": 0.000769253655259187
+        }
+      }
+    },
+    "14": {
+      "throughput": {
+        "median_MPx_per_s": 183.7228923397671,
+        "mean_MPx_per_s": 181.31126849186057,
+        "total_per_image": {
+          "median": 0.0014268445083871484,
+          "mean": 0.0014458229881711305
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0005127014592289925,
+          "mean": 0.0005173209123313427
+        },
+        "transfer": {
+          "median": 5.6524877436459064e-05,
+          "mean": 5.9186112290869154e-05
+        },
+        "store": {
+          "median": 0.0008503529243171215,
+          "mean": 0.0008693159635489186
+        }
+      }
+    },
+    "15": {
+      "throughput": {
+        "median_MPx_per_s": 162.86942812886807,
+        "mean_MPx_per_s": 160.79929727925227,
+        "total_per_image": {
+          "median": 0.0016095347236841917,
+          "mean": 0.0016302558806880066
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0005059419199824333,
+          "mean": 0.0005127648764755577
+        },
+        "transfer": {
+          "median": 5.7609984651207924e-05,
+          "mean": 5.939395244543751e-05
+        },
+        "store": {
+          "median": 0.0010400685714557767,
+          "mean": 0.0010580970517670115
+        }
+      }
+    },
+    "16": {
+      "throughput": {
+        "median_MPx_per_s": 154.54822701812137,
+        "mean_MPx_per_s": 151.90380322327766,
+        "total_per_image": {
+          "median": 0.0016961954534053802,
+          "mean": 0.0017257237438267718
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0005177020793780684,
+          "mean": 0.000517768682523941
+        },
+        "transfer": {
+          "median": 5.8710575103759766e-05,
+          "mean": 6.038317224010825e-05
+        },
+        "store": {
+          "median": 0.0011201988672837615,
+          "mean": 0.0011475718890627225
+        }
+      }
+    },
+    "17": {
+      "throughput": {
+        "median_MPx_per_s": 143.63067698959873,
+        "mean_MPx_per_s": 138.2136065432043,
+        "total_per_image": {
+          "median": 0.0018251254223287106,
+          "mean": 0.0018966584155956903
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0005099265836179256,
+          "mean": 0.0005165724471832315
+        },
+        "transfer": {
+          "median": 5.960057023912668e-05,
+          "mean": 6.124036541829506e-05
+        },
+        "store": {
+          "median": 0.00124754395801574,
+          "mean": 0.0013188456029941638
+        }
+      }
+    },
+    "18": {
+      "throughput": {
+        "median_MPx_per_s": 134.08337462392123,
+        "mean_MPx_per_s": 132.30500501803886,
+        "total_per_image": {
+          "median": 0.0019550820579752326,
+          "mean": 0.00198136117348137
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0005062170093879104,
+          "mean": 0.0005152457277290523
+        },
+        "transfer": {
+          "median": 6.034062243998051e-05,
+          "mean": 6.205555788862209e-05
+        },
+        "store": {
+          "median": 0.0013759189750999212,
+          "mean": 0.0014040598878636956
+        }
+      }
+    },
+    "19": {
+      "throughput": {
+        "median_MPx_per_s": 96.31560131878764,
+        "mean_MPx_per_s": 92.26056041123286,
+        "total_per_image": {
+          "median": 0.002721718978136778,
+          "mean": 0.0028413441109781464
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0006310174940153956,
+          "mean": 0.0006328598305117339
+        },
+        "transfer": {
+          "median": 7.508054841309786e-05,
+          "mean": 7.627092806311945e-05
+        },
+        "store": {
+          "median": 0.0020135565428063273,
+          "mean": 0.002132213352403293
+        }
+      }
+    },
+    "20": {
+      "throughput": {
+        "median_MPx_per_s": 84.66075160561425,
+        "mean_MPx_per_s": 83.16536773405203,
+        "total_per_image": {
+          "median": 0.003096405300311744,
+          "mean": 0.0031520812946837394
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0006350668845698237,
+          "mean": 0.0006484627587875972
+        },
+        "transfer": {
+          "median": 7.869058754295111e-05,
+          "mean": 8.15490745784094e-05
+        },
+        "store": {
+          "median": 0.0023217530688270926,
+          "mean": 0.002422069461317733
+        }
+      }
+    },
+    "21": {
+      "throughput": {
+        "median_MPx_per_s": 75.16940034606529,
+        "mean_MPx_per_s": 71.61166658599561,
+        "total_per_image": {
+          "median": 0.003487376496195793,
+          "mean": 0.0036606325826141982
+        }
+      },
+      "stages": {
+        "analysis": {
+          "median": 0.0006393324583768845,
+          "mean": 0.0006424133219600966
+        },
+        "transfer": {
+          "median": 8.243101183325052e-05,
+          "mean": 8.508268316897253e-05
+        },
+        "store": {
+          "median": 0.0027584993513301015,
+          "mean": 0.0029331365774851294
+        }
+      }
+    }
+  }
+}

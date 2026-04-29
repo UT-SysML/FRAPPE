@@ -1,0 +1,746 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Inference using pre-trained model &#8212; FRAPPE</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'FRAPPE';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="FRAPPE" href="overview.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">FRAPPE</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">FRAPPE</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Inference using pre-trained model</a></li>
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/FRAPPE.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Inference using pre-trained model</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Inference using pre-trained model</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-input-residual-output-autoencoding-with-projection-pursuit-encoders">Full-Input Residual-Output Autoencoding with Projection Pursuit Encoders</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#progressive-multi-scale-autoencoder">Progressive Multi-Scale Autoencoder</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-a-checkpoint">Loading a checkpoint</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-filters">Encoder filters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-encode-decode-pipeline">Full encode-decode pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-rate-truncated-channel-reconstruction">Variable-rate: truncated channel reconstruction</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="inference-using-pre-trained-model">
+<h1>Inference using pre-trained model<a class="headerlink" href="#inference-using-pre-trained-model" title="Link to this heading">#</a></h1>
+<section id="full-input-residual-output-autoencoding-with-projection-pursuit-encoders">
+<h2>Full-Input Residual-Output Autoencoding with Projection Pursuit Encoders<a class="headerlink" href="#full-input-residual-output-autoencoding-with-projection-pursuit-encoders" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="progressive-multi-scale-autoencoder">
+<h1>Progressive Multi-Scale Autoencoder<a class="headerlink" href="#progressive-multi-scale-autoencoder" title="Link to this heading">#</a></h1>
+<p>Inference tutorial for the <code class="docutils literal notranslate"><span class="pre">compressors.frappe</span></code> module (patchify approach). Finer-scale latents are rearranged to the coarsest resolution via einops, then all patchified latents are concatenated and fed through a single unified decoder.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">datasets</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="o">,</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="o">,</span><span class="w"> </span><span class="nn">io</span><span class="o">,</span><span class="w"> </span><span class="nn">PIL.Image</span><span class="o">,</span><span class="w"> </span><span class="nn">pillow_jpls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">compressors.frappe.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">MergedAutoencoder</span><span class="p">,</span> <span class="n">load_progressive_model</span><span class="p">,</span> <span class="n">load_from_hub</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">compressors.frappe.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_scale_groups</span><span class="p">,</span> <span class="n">adapt_to_decoder</span><span class="p">,</span> <span class="n">decoder_channels_per_encoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">compressors.frappe.quantize</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb_to_linear</span><span class="p">,</span> <span class="n">make_quantizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.transforms.v2.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">pil_to_tensor</span><span class="p">,</span> <span class="n">to_pil_image</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;cuda:0&#39;</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;danjacobellis/kodak&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s1">&#39;validation&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="loading-a-checkpoint">
+<h2>Loading a checkpoint<a class="headerlink" href="#loading-a-checkpoint" title="Link to this heading">#</a></h2>
+<p>Progressive checkpoints store per-channel-count snapshots: <code class="docutils literal notranslate"><span class="pre">merged_decoder_weights[n]</span></code> contains encoder weights (per scale group), decoder weights, scale group structure, and patchify factors for a model using the first <code class="docutils literal notranslate"><span class="pre">n+1</span></code> channels.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">n_trained</span> <span class="o">=</span> <span class="n">load_from_hub</span><span class="p">()</span>
+<span class="n">max_ps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">ps</span><span class="p">[:</span><span class="n">n_trained</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Channels trained: </span><span class="si">{</span><span class="n">n_trained</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Patch sizes: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">ps</span><span class="p">[:</span><span class="n">n_trained</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Decoder ps: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">decoder_ps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Channels trained: 21
+Patch sizes: [32, 32, 32, 16, 16, 16, 16, 16, 16, 8, 8, 8, 4, 4, 4, 4, 4, 4, 2, 2, 2]
+Decoder ps: 8
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="encoder-filters">
+<h2>Encoder filters<a class="headerlink" href="#encoder-filters" title="Link to this heading">#</a></h2>
+<p>Each scale group has its own consolidated encoder. Display the learned filters per scale.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">compressors.frappe.visualize</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_filter_grid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">einops</span>
+
+<span class="n">merged</span> <span class="o">=</span> <span class="n">load_progressive_model</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">n_trained</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+<span class="c1"># Compute per-scale std (the normalization range for display)</span>
+<span class="n">scale_stds</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="n">ps_s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">scale_groups</span><span class="p">):</span>
+    <span class="n">n_ch_g</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">filters</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">encoders</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+    <span class="n">biases</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">encoders</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">rearrange</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="s1">&#39;(H W) c h w -&gt; H W c h w&#39;</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="n">n_ch_g</span><span class="p">)</span>
+    <span class="n">bias_grid</span> <span class="o">=</span> <span class="n">einops</span><span class="o">.</span><span class="n">rearrange</span><span class="p">(</span><span class="n">biases</span><span class="p">,</span> <span class="s1">&#39;(H W) -&gt; H W 1 1 1&#39;</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="n">n_ch_g</span><span class="p">)</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">grid</span> <span class="o">+</span> <span class="n">bias_grid</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]))</span>
+    <span class="n">scale_stds</span><span class="p">[</span><span class="n">ps_s</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+<span class="n">scale</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="n">ps_s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">scale_groups</span><span class="p">):</span>
+    <span class="n">n_ch_g</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">filters</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">encoders</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+    <span class="n">biases</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">encoders</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">make_filter_grid</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">biases</span><span class="p">,</span> <span class="n">n_ch_g</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_ch_g</span><span class="p">))</span>
+    <span class="n">w_px</span><span class="p">,</span> <span class="n">h_px</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">to_pil_image</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">w_px</span><span class="p">,</span> <span class="n">h_px</span><span class="p">),</span> <span class="n">resample</span><span class="o">=</span><span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">Resampling</span><span class="o">.</span><span class="n">NEAREST</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+<span class="c1"># Display range: each scale normalized to ±4σ independently</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Filter std per scale (display range = ±4σ):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ps_s</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">scale_stds</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  p=</span><span class="si">{</span><span class="n">ps_s</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">:  σ = </span><span class="si">{</span><span class="n">scale_stds</span><span class="p">[</span><span class="n">ps_s</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/a2faf274df76c10b3b830398bb39c9f5803f4eacb2bbc02029cd3ece4a9d88d6.webp" src="_images/a2faf274df76c10b3b830398bb39c9f5803f4eacb2bbc02029cd3ece4a9d88d6.webp" />
+<img alt="_images/929409b807f8061c62ea531a45b2df75df186842f11018aa46a1a375afc74b77.webp" src="_images/929409b807f8061c62ea531a45b2df75df186842f11018aa46a1a375afc74b77.webp" />
+<img alt="_images/921312641a6a1372ac071282fc0067b247d3b2dda3a620e9e1470d2f46c77850.webp" src="_images/921312641a6a1372ac071282fc0067b247d3b2dda3a620e9e1470d2f46c77850.webp" />
+<img alt="_images/c1901d429c6515dd22657a1b5e920373e6c2cc361bc1e5c6ecdf8e04a5b2ff01.webp" src="_images/c1901d429c6515dd22657a1b5e920373e6c2cc361bc1e5c6ecdf8e04a5b2ff01.webp" />
+<img alt="_images/f280ca657e3dd59a48d2430438c46b043204ad50f34f1cfbb8c79a5c359bf3bf.webp" src="_images/f280ca657e3dd59a48d2430438c46b043204ad50f34f1cfbb8c79a5c359bf3bf.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Filter std per scale (display range = ±4σ):
+  p=32:  σ = 0.0117
+  p=16:  σ = 0.0364
+  p= 8:  σ = 0.0710
+  p= 4:  σ = 0.2006
+  p= 2:  σ = 0.3584
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">prepare_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">max_ps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resize image to nearest multiple of max encoder patch size.&quot;&quot;&quot;</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">h_rs</span> <span class="o">=</span> <span class="n">max_ps</span> <span class="o">*</span> <span class="p">(</span><span class="n">h</span> <span class="o">//</span> <span class="n">max_ps</span><span class="p">)</span>
+    <span class="n">w_rs</span> <span class="o">=</span> <span class="n">max_ps</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">//</span> <span class="n">max_ps</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">w_rs</span><span class="p">,</span> <span class="n">h_rs</span><span class="p">),</span> <span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">Resampling</span><span class="o">.</span><span class="n">BICUBIC</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_bpp</span><span class="p">(</span><span class="n">latents_q</span><span class="p">,</span> <span class="n">n_pixels</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compress each scale separately with JPEG-LS and return bits per pixel.&quot;&quot;&quot;</span>
+    <span class="n">total_bytes</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">latents_q</span><span class="p">:</span>
+        <span class="n">z_2d</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">buff</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">to_pil_image</span><span class="p">((</span><span class="n">z_2d</span><span class="o">.</span><span class="n">long</span><span class="p">()</span> <span class="o">+</span> <span class="mi">127</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">buff</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;JPEG-LS&#39;</span><span class="p">)</span>
+        <span class="n">total_bytes</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">buff</span><span class="o">.</span><span class="n">getbuffer</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">total_bytes</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">/</span> <span class="n">n_pixels</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="full-encode-decode-pipeline">
+<h2>Full encode-decode pipeline<a class="headerlink" href="#full-encode-decode-pipeline" title="Link to this heading">#</a></h2>
+<p>Encode at each scale’s native resolution, quantize to int8, compress each scale separately with JPEG-LS, then patchify all latents to coarsest resolution and decode through the unified decoder.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">img</span> <span class="o">=</span> <span class="n">prepare_image</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">22</span><span class="p">][</span><span class="s1">&#39;image&#39;</span><span class="p">],</span> <span class="n">max_ps</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">pil_to_tensor</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">127.5</span> <span class="o">-</span> <span class="mf">1.0</span>
+<span class="n">x_in</span> <span class="o">=</span> <span class="n">srgb_to_linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;linear_input&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span>
+<span class="n">n_pixels</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="c1"># 1. Encode</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">inference_mode</span><span class="p">():</span>
+    <span class="n">latents</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x_in</span><span class="p">)</span>
+    <span class="n">latents_q</span> <span class="o">=</span> <span class="p">[</span><span class="n">z</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">127</span><span class="p">,</span> <span class="mi">127</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">latents</span><span class="p">]</span>
+
+<span class="c1"># 2. Compression ratio</span>
+<span class="n">bpp</span> <span class="o">=</span> <span class="n">compute_bpp</span><span class="p">(</span><span class="n">latents_q</span><span class="p">,</span> <span class="n">n_pixels</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bpp=</span><span class="si">{</span><span class="n">bpp</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  CR=</span><span class="si">{</span><span class="mi">24</span><span class="o">/</span><span class="n">bpp</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3. Display latents per scale</span>
+<span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">latents_q</span><span class="p">:</span>
+    <span class="n">z_2d</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">to_pil_image</span><span class="p">((</span><span class="n">z_2d</span><span class="o">.</span><span class="n">long</span><span class="p">()</span> <span class="o">+</span> <span class="mi">127</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">)))</span>
+
+<span class="c1"># 4. Decode</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">inference_mode</span><span class="p">():</span>
+    <span class="n">xhat</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">latents_q</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">x_01</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span>
+<span class="n">xhat_01</span> <span class="o">=</span> <span class="n">xhat</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span>
+
+<span class="c1"># 5. PSNR</span>
+<span class="n">psnr</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">x_01</span><span class="p">,</span> <span class="n">xhat_01</span><span class="p">)</span><span class="o">.</span><span class="n">log10</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSNR=</span><span class="si">{</span><span class="n">psnr</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> dB (</span><span class="si">{</span><span class="n">n_trained</span><span class="si">}</span><span class="s2">ch)&quot;</span><span class="p">)</span>
+
+<span class="c1"># 6. Display reconstruction</span>
+<span class="n">display</span><span class="p">(</span><span class="n">to_pil_image</span><span class="p">(</span><span class="n">xhat_01</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>bpp=0.6563  CR=36.57
+</pre></div>
+</div>
+<img alt="_images/7ec31ee359a79b7c28035b73b9bd0f38a33abc908a5a92fce49a1a7a49df4f6e.webp" src="_images/7ec31ee359a79b7c28035b73b9bd0f38a33abc908a5a92fce49a1a7a49df4f6e.webp" />
+<img alt="_images/f52ff3c71c5f6906db4a51239d42ec1fd9187afdab45bee818a41af1300e47e1.webp" src="_images/f52ff3c71c5f6906db4a51239d42ec1fd9187afdab45bee818a41af1300e47e1.webp" />
+<img alt="_images/ac175809b333675399058d843d0cb1c2932615c3179ce039b9573999666d2df4.webp" src="_images/ac175809b333675399058d843d0cb1c2932615c3179ce039b9573999666d2df4.webp" />
+<img alt="_images/f46b8558c893f4b6c5b18b016e08dd0315546e5930cbd8f0f901adcfe3cd7cc5.webp" src="_images/f46b8558c893f4b6c5b18b016e08dd0315546e5930cbd8f0f901adcfe3cd7cc5.webp" />
+<img alt="_images/6dbd7f165a4c3cbf4f66a4d93164cc6bdbae409d98dd670fe1c38998b027f5f8.webp" src="_images/6dbd7f165a4c3cbf4f66a4d93164cc6bdbae409d98dd670fe1c38998b027f5f8.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PSNR=35.19 dB (21ch)
+</pre></div>
+</div>
+<img alt="_images/bf9f0a60d353a395fd118a605061cbbea72b7f78944196cafbc473e0432a3dd4.webp" src="_images/bf9f0a60d353a395fd118a605061cbbea72b7f78944196cafbc473e0432a3dd4.webp" />
+</div>
+</div>
+</section>
+<section id="variable-rate-truncated-channel-reconstruction">
+<h2>Variable-rate: truncated channel reconstruction<a class="headerlink" href="#variable-rate-truncated-channel-reconstruction" title="Link to this heading">#</a></h2>
+<p>For variable-rate coding, transmit only the first <code class="docutils literal notranslate"><span class="pre">n_ch</span></code> channels. Each channel count has its own decoder snapshot.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">compressors.frappe.evaluate</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
+
+<span class="k">for</span> <span class="n">n_ch</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">21</span><span class="p">]:</span>
+    <span class="n">partial</span> <span class="o">=</span> <span class="n">load_progressive_model</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">n_ch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">inference_mode</span><span class="p">():</span>
+        <span class="n">latents_pq</span> <span class="o">=</span> <span class="p">[</span><span class="n">z</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">127</span><span class="p">,</span> <span class="mi">127</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">partial</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x_in</span><span class="p">)]</span>
+        <span class="n">xhat_p</span> <span class="o">=</span> <span class="n">partial</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">latents_pq</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">bpp_p</span> <span class="o">=</span> <span class="n">compute_bpp</span><span class="p">(</span><span class="n">latents_pq</span><span class="p">,</span> <span class="n">n_pixels</span><span class="p">)</span>
+    <span class="n">psnr_p</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">x_01</span><span class="p">,</span> <span class="n">xhat_p</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">log10</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CR=</span><span class="si">{</span><span class="mi">24</span><span class="o">/</span><span class="n">bpp_p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  PSNR=</span><span class="si">{</span><span class="n">psnr_p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> dB (</span><span class="si">{</span><span class="n">n_ch</span><span class="si">}</span><span class="s2">ch)&quot;</span><span class="p">)</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">to_pil_image</span><span class="p">((</span><span class="n">xhat_p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+
+<span class="n">rd_points</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">n_ch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_trained</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">load_progressive_model</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">n_ch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+    <span class="n">psnr</span><span class="p">,</span> <span class="n">cr</span> <span class="o">=</span> <span class="n">validate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="n">rd_points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mf">24.0</span> <span class="o">/</span> <span class="n">cr</span><span class="p">,</span> <span class="n">psnr</span><span class="p">))</span>
+    <span class="k">del</span> <span class="n">model</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">empty_cache</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rd_points</span><span class="p">],</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rd_points</span><span class="p">],</span> <span class="s1">&#39;o-&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;bpp&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;PSNR (dB)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PSNR vs bpp (kodak)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Kodak average (</span><span class="si">{</span><span class="n">n_trained</span><span class="si">}</span><span class="s2">ch):&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bpp</span><span class="p">,</span> <span class="n">psnr</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rd_points</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [ch</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] bpp=</span><span class="si">{</span><span class="n">bpp</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  CR=</span><span class="si">{</span><span class="mi">24</span><span class="o">/</span><span class="n">bpp</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  PSNR=</span><span class="si">{</span><span class="n">psnr</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> dB&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CR=5436.17  PSNR=17.04 dB (1ch)
+</pre></div>
+</div>
+<img alt="_images/a0a672587e8480b87d14aa2f40e6bdc85e0bd4d86fb050c794beac9993d29211.webp" src="_images/a0a672587e8480b87d14aa2f40e6bdc85e0bd4d86fb050c794beac9993d29211.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CR=3490.08  PSNR=20.65 dB (2ch)
+</pre></div>
+</div>
+<img alt="_images/192ce9c1e7db0734b317db41dfc878975993450fcbcf674d62bf05cc0cce9902.webp" src="_images/192ce9c1e7db0734b317db41dfc878975993450fcbcf674d62bf05cc0cce9902.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CR=2699.42  PSNR=22.93 dB (3ch)
+</pre></div>
+</div>
+<img alt="_images/953f503f3d891c367c3407862907942dbc3fcf3a9f3bede0599206437f133299.webp" src="_images/953f503f3d891c367c3407862907942dbc3fcf3a9f3bede0599206437f133299.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CR=1024.89  PSNR=24.98 dB (6ch)
+</pre></div>
+</div>
+<img alt="_images/6c94c4d6a45dc7c386464d78910fd55220d87fb81987f3dafd6b19888362f7c4.webp" src="_images/6c94c4d6a45dc7c386464d78910fd55220d87fb81987f3dafd6b19888362f7c4.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CR=403.71  PSNR=28.14 dB (12ch)
+</pre></div>
+</div>
+<img alt="_images/4b0b9f506a24ad83b57a44df31372daf13bb0de52f1cd510ccf6b8f2a0782fbf.webp" src="_images/4b0b9f506a24ad83b57a44df31372daf13bb0de52f1cd510ccf6b8f2a0782fbf.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CR=116.16  PSNR=32.09 dB (15ch)
+</pre></div>
+</div>
+<img alt="_images/2cd2898a51c2aa5428b5eb0edcb278f76f81327108a9fb0e39528a6aa46d3129.webp" src="_images/2cd2898a51c2aa5428b5eb0edcb278f76f81327108a9fb0e39528a6aa46d3129.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CR=36.57  PSNR=35.19 dB (21ch)
+</pre></div>
+</div>
+<img alt="_images/bf9f0a60d353a395fd118a605061cbbea72b7f78944196cafbc473e0432a3dd4.webp" src="_images/bf9f0a60d353a395fd118a605061cbbea72b7f78944196cafbc473e0432a3dd4.webp" />
+<img alt="_images/2fb25f6b6dd5831bd324fc3ace81c0a913582d91564e9afd39b892372230a7db.webp" src="_images/2fb25f6b6dd5831bd324fc3ace81c0a913582d91564e9afd39b892372230a7db.webp" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Kodak average (21ch):
+  [ch0] bpp=0.0042  CR=5767.27  PSNR=18.54 dB
+  [ch1] bpp=0.0063  CR=3802.25  PSNR=20.30 dB
+  [ch2] bpp=0.0079  CR=3030.24  PSNR=21.08 dB
+  [ch3] bpp=0.0132  CR=1817.76  PSNR=21.90 dB
+  [ch4] bpp=0.0170  CR=1412.33  PSNR=22.38 dB
+  [ch5] bpp=0.0257  CR=932.65  PSNR=23.13 dB
+  [ch6] bpp=0.0351  CR=684.73  PSNR=23.74 dB
+  [ch7] bpp=0.0408  CR=587.57  PSNR=24.05 dB
+  [ch8] bpp=0.0471  CR=509.37  PSNR=24.40 dB
+  [ch9] bpp=0.0577  CR=416.15  PSNR=24.81 dB
+  [ch10] bpp=0.0690  CR=347.68  PSNR=25.27 dB
+  [ch11] bpp=0.0800  CR=299.89  PSNR=25.64 dB
+  [ch12] bpp=0.1963  CR=122.27  PSNR=27.40 dB
+  [ch13] bpp=0.2327  CR=103.16  PSNR=27.98 dB
+  [ch14] bpp=0.2848  CR=84.28  PSNR=28.69 dB
+  [ch15] bpp=0.3140  CR=76.44  PSNR=29.22 dB
+  [ch16] bpp=0.3660  CR=65.57  PSNR=29.69 dB
+  [ch17] bpp=0.4119  CR=58.26  PSNR=29.98 dB
+  [ch18] bpp=0.6319  CR=37.98  PSNR=30.94 dB
+  [ch19] bpp=0.7216  CR=33.26  PSNR=31.57 dB
+  [ch20] bpp=0.9414  CR=25.50  PSNR=32.28 dB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "g"
+        },
+        kernelOptions: {
+            name: "g",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'g'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="overview.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">FRAPPE</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Inference using pre-trained model</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-input-residual-output-autoencoding-with-projection-pursuit-encoders">Full-Input Residual-Output Autoencoding with Projection Pursuit Encoders</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#progressive-multi-scale-autoencoder">Progressive Multi-Scale Autoencoder</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-a-checkpoint">Loading a checkpoint</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder-filters">Encoder filters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-encode-decode-pipeline">Full encode-decode pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-rate-truncated-channel-reconstruction">Variable-rate: truncated channel reconstruction</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Dan Jacobellis
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
