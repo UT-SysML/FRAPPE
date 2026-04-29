@@ -10,6 +10,6 @@ Modern media compression standards have reached a plateau in terms of the rate-d
 
 ## Installation
 
-FRAPPE is integrated in the compressors https://danjacobellis.net/compressors library:
+FRAPPE is integrated in the compressors library:
 
 `pip install compressors`
