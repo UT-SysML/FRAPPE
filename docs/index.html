@@ -322,6 +322,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-input-residual-output-autoencoding-with-projection-pursuit-encoder">Full Input, Residual Output Autoencoding with Projection Pursuit Encoder</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 </ul>
             </nav>
@@ -336,9 +337,15 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="frappe">
 <h1>FRAPPE<a class="headerlink" href="#frappe" title="Link to this heading">#</a></h1>
+<section id="full-input-residual-output-autoencoding-with-projection-pursuit-encoder">
+<h2>Full Input, Residual Output Autoencoding with Projection Pursuit Encoder<a class="headerlink" href="#full-input-residual-output-autoencoding-with-projection-pursuit-encoder" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://github.com/UT-SysML/FRAPPE">code</a>
+<a class="reference internal" href="#danjacobellis.net/_static/FRAPPE.pdf"><span class="xref myst">paper</span></a></p>
+<p>Modern media compression standards have reached a plateau in terms of the rate-distortion-complexity trade-off. For many applications, this has severely limited the ability to offload computation to the cloud. Recent advances in DNN-based autoencoders have shown potential to break free of this plateau, but remain impractical for three reasons: (1) they cannot easily adapt to different rates; (2) they require prohibitive encoding costs to before matching compression efficiency; (3) they require power-hungry GPUs to encode in real-time. To address these issues, we propose a new type of residual autoencoder (FRAPPE) that uses the \textbf{F}ull input to predict the \textbf{R}esidual output via a \textbf{P}rojection-\textbf{P}ursuit \textbf{E}ncoder. FRAPPE’s encoding objective naturally sorts latent channels by importance, allowing zero overhead variable-rate coding using a single set of encoder weights. Unlike previous residual autoencoders, which require an inherently sequential encoding workflow with the decoder in the loop, FRAPPE allows all latent channels to be encoded in parallel. At bitrates near 0.1,bpp (compression ratio of 240:1) FRAPPE provides better perceptual quality than AVIF with 47 times faster encoding, making it capable of real-time (1080p, 30fps) CPU encoding even at the highest quality. Our code, pre-trained models, and results are available at \url{<a class="reference external" href="https://UT-SysML.github.io/FRAPPE">https://UT-SysML.github.io/FRAPPE</a>}</p>
+</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>FRAPPE is integrated in the <a class="reference external" href="https://danjacobellis.net/compressors/">compressors</a> library:</p>
+<p>FRAPPE is integrated in the compressors <a class="reference external" href="https://danjacobellis.net/compressors">https://danjacobellis.net/compressors</a> library:</p>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">compressors</span></code></p>
 </section>
 <div class="toctree-wrapper compound">
@@ -402,6 +409,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#full-input-residual-output-autoencoding-with-projection-pursuit-encoder">Full Input, Residual Output Autoencoding with Projection Pursuit Encoder</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
 </ul>
   </nav></div>
