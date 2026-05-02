@@ -1,0 +1,177 @@
+{
+  "id": 1777585754,
+  "codec": "compressai:mbt2018",
+  "task": "encode_complexity",
+  "dataset": "danjacobellis/kodak",
+  "input_resolution": [
+    512,
+    512
+  ],
+  "n_images": 24,
+  "quality_values": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "stages": [
+    "encode"
+  ],
+  "config": {
+    "backend": "compressai_baselines (vendored)",
+    "torch_version": "2.11.0+cu130",
+    "architecture": "mbt2018",
+    "metric_variant": "mse",
+    "downsampling_factor": 64,
+    "image_processing": {
+      "convert_mode": "RGB",
+      "resolution": "512x512 center crop"
+    },
+    "bpp_source": "estimated_from_likelihoods",
+    "device": "cpu",
+    "torch_num_threads": 1
+  },
+  "testbed": {
+    "hostname": "ecen-a94017",
+    "os": "Linux 6.8.0-107-generic",
+    "python_version": "3.12.3",
+    "torch_version": "2.11.0+cu130",
+    "n_warmup": 1,
+    "n_measurement": 5,
+    "cpu_model": "AMD EPYC 9354 32-Core Processor"
+  },
+  "results": {
+    "1": {
+      "throughput": {
+        "median_MPx_per_s": 0.16558342921640828,
+        "mean_MPx_per_s": 0.16570997699624812,
+        "total_per_image": {
+          "median": 1.583153587533161,
+          "mean": 1.5819445802345096
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.583153587533161,
+          "mean": 1.5819445802345096
+        }
+      }
+    },
+    "2": {
+      "throughput": {
+        "median_MPx_per_s": 0.17283778943367326,
+        "mean_MPx_per_s": 0.17282024974391563,
+        "total_per_image": {
+          "median": 1.516705350484699,
+          "mean": 1.5168592823378275
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.516705350484699,
+          "mean": 1.5168592823378275
+        }
+      }
+    },
+    "3": {
+      "throughput": {
+        "median_MPx_per_s": 0.1728157973881146,
+        "mean_MPx_per_s": 0.17291099519829192,
+        "total_per_image": {
+          "median": 1.5168983620824292,
+          "mean": 1.516063219110947
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.5168983620824292,
+          "mean": 1.516063219110947
+        }
+      }
+    },
+    "4": {
+      "throughput": {
+        "median_MPx_per_s": 0.1726125185529141,
+        "mean_MPx_per_s": 0.17254179689663135,
+        "total_per_image": {
+          "median": 1.5186847524018958,
+          "mean": 1.5193072328848454
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.5186847524018958,
+          "mean": 1.5193072328848454
+        }
+      }
+    },
+    "5": {
+      "throughput": {
+        "median_MPx_per_s": 0.1639318311292524,
+        "mean_MPx_per_s": 0.16460459717496106,
+        "total_per_image": {
+          "median": 1.5991037139901891,
+          "mean": 1.5925679142567484
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.5991037139901891,
+          "mean": 1.5925679142567484
+        }
+      }
+    },
+    "6": {
+      "throughput": {
+        "median_MPx_per_s": 0.17430961314657967,
+        "mean_MPx_per_s": 0.17416156820617237,
+        "total_per_image": {
+          "median": 1.5038986965082586,
+          "mean": 1.5051770760910586
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.5038986965082586,
+          "mean": 1.5051770760910586
+        }
+      }
+    },
+    "7": {
+      "throughput": {
+        "median_MPx_per_s": 0.15609799672727415,
+        "mean_MPx_per_s": 0.15608140025341252,
+        "total_per_image": {
+          "median": 1.6793553120223805,
+          "mean": 1.679533881515575
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.6793553120223805,
+          "mean": 1.679533881515575
+        }
+      }
+    },
+    "8": {
+      "throughput": {
+        "median_MPx_per_s": 0.15602458693578475,
+        "mean_MPx_per_s": 0.1559828210977281,
+        "total_per_image": {
+          "median": 1.6801454511005431,
+          "mean": 1.6805953255311274
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 1.6801454511005431,
+          "mean": 1.6805953255311274
+        }
+      }
+    }
+  }
+}

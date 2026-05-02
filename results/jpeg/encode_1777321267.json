@@ -1,0 +1,395 @@
+{
+  "id": 1777321267,
+  "codec": "pillow:jpeg",
+  "task": "encode_complexity",
+  "dataset": "danjacobellis/kodak",
+  "input_resolution": [
+    512,
+    512
+  ],
+  "n_images": 24,
+  "quality_values": [
+    1,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75,
+    80,
+    85,
+    90,
+    95,
+    100
+  ],
+  "stages": [
+    "encode"
+  ],
+  "config": {
+    "backend": "pillow",
+    "pil_version": "12.2.0",
+    "format": "JPEG",
+    "quality_arg": "quality",
+    "extra_kwargs": {},
+    "image_processing": {
+      "convert_mode": "RGB",
+      "resolution": "512x512 center crop"
+    }
+  },
+  "testbed": {
+    "hostname": "ecen-a94017",
+    "os": "Linux 6.8.0-107-generic",
+    "python_version": "3.12.3",
+    "pil_version": "12.2.0",
+    "n_warmup": 1,
+    "n_measurement": 5,
+    "cpu_model": "AMD EPYC 9354 32-Core Processor"
+  },
+  "results": {
+    "1": {
+      "throughput": {
+        "median_MPx_per_s": 543.9664753721556,
+        "mean_MPx_per_s": 543.5678657041219,
+        "total_per_image": {
+          "median": 0.00048191205132752657,
+          "mean": 0.0004822654474992305
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.00048191205132752657,
+          "mean": 0.0004822654474992305
+        }
+      }
+    },
+    "5": {
+      "throughput": {
+        "median_MPx_per_s": 530.2510918998942,
+        "mean_MPx_per_s": 514.3555838388436,
+        "total_per_image": {
+          "median": 0.0004943771054968238,
+          "mean": 0.0005096552039807041
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0004943771054968238,
+          "mean": 0.0005096552039807041
+        }
+      }
+    },
+    "10": {
+      "throughput": {
+        "median_MPx_per_s": 529.8973417791656,
+        "mean_MPx_per_s": 524.514513347891,
+        "total_per_image": {
+          "median": 0.0004947071429342031,
+          "mean": 0.0004997840733267367
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0004947071429342031,
+          "mean": 0.0004997840733267367
+        }
+      }
+    },
+    "15": {
+      "throughput": {
+        "median_MPx_per_s": 501.507063300461,
+        "mean_MPx_per_s": 494.05810433996544,
+        "total_per_image": {
+          "median": 0.0005227124784141779,
+          "mean": 0.0005305934619779389
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005227124784141779,
+          "mean": 0.0005305934619779389
+        }
+      }
+    },
+    "20": {
+      "throughput": {
+        "median_MPx_per_s": 469.02460946069414,
+        "mean_MPx_per_s": 456.84017359628746,
+        "total_per_image": {
+          "median": 0.0005589131033048034,
+          "mean": 0.0005738199378053347
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005589131033048034,
+          "mean": 0.0005738199378053347
+        }
+      }
+    },
+    "25": {
+      "throughput": {
+        "median_MPx_per_s": 487.9665703833539,
+        "mean_MPx_per_s": 481.3140198049573,
+        "total_per_image": {
+          "median": 0.000537217129021883,
+          "mean": 0.0005446423524214576
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.000537217129021883,
+          "mean": 0.0005446423524214576
+        }
+      }
+    },
+    "30": {
+      "throughput": {
+        "median_MPx_per_s": 475.5205139636908,
+        "mean_MPx_per_s": 462.15366203861294,
+        "total_per_image": {
+          "median": 0.0005512780044227839,
+          "mean": 0.0005672225961461663
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005512780044227839,
+          "mean": 0.0005672225961461663
+        }
+      }
+    },
+    "35": {
+      "throughput": {
+        "median_MPx_per_s": 479.66213908397856,
+        "mean_MPx_per_s": 471.06685250142414,
+        "total_per_image": {
+          "median": 0.0005465180147439241,
+          "mean": 0.0005564900153937439
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005465180147439241,
+          "mean": 0.0005564900153937439
+        }
+      }
+    },
+    "40": {
+      "throughput": {
+        "median_MPx_per_s": 469.89990444350474,
+        "mean_MPx_per_s": 462.8897811851524,
+        "total_per_image": {
+          "median": 0.0005578720010817051,
+          "mean": 0.0005663205597860117
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005578720010817051,
+          "mean": 0.0005663205597860117
+        }
+      }
+    },
+    "45": {
+      "throughput": {
+        "median_MPx_per_s": 463.7106562408808,
+        "mean_MPx_per_s": 455.376304623122,
+        "total_per_image": {
+          "median": 0.0005653180414810777,
+          "mean": 0.0005756645599224915
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005653180414810777,
+          "mean": 0.0005756645599224915
+        }
+      }
+    },
+    "50": {
+      "throughput": {
+        "median_MPx_per_s": 455.88473870851027,
+        "mean_MPx_per_s": 447.44520029842556,
+        "total_per_image": {
+          "median": 0.0005750225391238928,
+          "mean": 0.0005858683919844528
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005750225391238928,
+          "mean": 0.0005858683919844528
+        }
+      }
+    },
+    "55": {
+      "throughput": {
+        "median_MPx_per_s": 436.13802510403707,
+        "mean_MPx_per_s": 428.14899166928643,
+        "total_per_image": {
+          "median": 0.0006010574288666248,
+          "mean": 0.0006122728421663245
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0006010574288666248,
+          "mean": 0.0006122728421663245
+        }
+      }
+    },
+    "60": {
+      "throughput": {
+        "median_MPx_per_s": 444.0649863041985,
+        "mean_MPx_per_s": 425.84029032104155,
+        "total_per_image": {
+          "median": 0.0005903280107304454,
+          "mean": 0.0006155922911905994
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0005903280107304454,
+          "mean": 0.0006155922911905994
+        }
+      }
+    },
+    "65": {
+      "throughput": {
+        "median_MPx_per_s": 435.9816371298179,
+        "mean_MPx_per_s": 429.4416086110559,
+        "total_per_image": {
+          "median": 0.0006012730300426483,
+          "mean": 0.0006104299041908235
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0006012730300426483,
+          "mean": 0.0006104299041908235
+        }
+      }
+    },
+    "70": {
+      "throughput": {
+        "median_MPx_per_s": 427.6920286057288,
+        "mean_MPx_per_s": 417.5863714701797,
+        "total_per_image": {
+          "median": 0.0006129270186647773,
+          "mean": 0.0006277599507787576
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0006129270186647773,
+          "mean": 0.0006277599507787576
+        }
+      }
+    },
+    "75": {
+      "throughput": {
+        "median_MPx_per_s": 407.0827512066228,
+        "mean_MPx_per_s": 402.1247516133286,
+        "total_per_image": {
+          "median": 0.0006439575226977468,
+          "mean": 0.0006518972009265174
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0006439575226977468,
+          "mean": 0.0006518972009265174
+        }
+      }
+    },
+    "80": {
+      "throughput": {
+        "median_MPx_per_s": 398.8206140727912,
+        "mean_MPx_per_s": 391.69911956467274,
+        "total_per_image": {
+          "median": 0.0006572980200871825,
+          "mean": 0.0006692483768953631
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0006572980200871825,
+          "mean": 0.0006692483768953631
+        }
+      }
+    },
+    "85": {
+      "throughput": {
+        "median_MPx_per_s": 384.5487509568034,
+        "mean_MPx_per_s": 377.9923538853713,
+        "total_per_image": {
+          "median": 0.0006816925015300512,
+          "mean": 0.0006935166738306482
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0006816925015300512,
+          "mean": 0.0006935166738306482
+        }
+      }
+    },
+    "90": {
+      "throughput": {
+        "median_MPx_per_s": 354.3118907359262,
+        "mean_MPx_per_s": 349.7192773690317,
+        "total_per_image": {
+          "median": 0.0007398679153993726,
+          "mean": 0.0007495840720366687
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0007398679153993726,
+          "mean": 0.0007495840720366687
+        }
+      }
+    },
+    "95": {
+      "throughput": {
+        "median_MPx_per_s": 307.10617308079395,
+        "mean_MPx_per_s": 303.32245318988083,
+        "total_per_image": {
+          "median": 0.0008535940432921052,
+          "mean": 0.0008642419881653041
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0008535940432921052,
+          "mean": 0.0008642419881653041
+        }
+      }
+    },
+    "100": {
+      "throughput": {
+        "median_MPx_per_s": 212.35435187219431,
+        "mean_MPx_per_s": 211.280488096304,
+        "total_per_image": {
+          "median": 0.0012344649294391274,
+          "mean": 0.001240739276787887
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0012344649294391274,
+          "mean": 0.001240739276787887
+        }
+      }
+    }
+  }
+}

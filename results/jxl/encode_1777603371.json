@@ -1,0 +1,174 @@
+{
+  "id": 1777603371,
+  "codec": "pillow:jxl",
+  "task": "encode_complexity",
+  "dataset": "danjacobellis/kodak",
+  "input_resolution": [
+    512,
+    512
+  ],
+  "n_images": 24,
+  "quality_values": [
+    5,
+    10,
+    20,
+    30,
+    50,
+    70,
+    85,
+    95
+  ],
+  "stages": [
+    "encode"
+  ],
+  "config": {
+    "backend": "pillow",
+    "pil_version": "12.2.0",
+    "format": "JXL",
+    "quality_arg": "quality",
+    "extra_kwargs": {},
+    "image_processing": {
+      "convert_mode": "RGB",
+      "resolution": "512x512 center crop"
+    }
+  },
+  "testbed": {
+    "hostname": "ecen-a94017",
+    "os": "Linux 6.8.0-107-generic",
+    "python_version": "3.12.3",
+    "pil_version": "12.2.0",
+    "n_warmup": 1,
+    "n_measurement": 5,
+    "cpu_model": "AMD EPYC 9354 32-Core Processor"
+  },
+  "results": {
+    "5": {
+      "throughput": {
+        "median_MPx_per_s": 3.1733581603772167,
+        "mean_MPx_per_s": 3.132725813750753,
+        "total_per_image": {
+          "median": 0.08260775706730783,
+          "mean": 0.08367920321955656
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.08260775706730783,
+          "mean": 0.08367920321955656
+        }
+      }
+    },
+    "10": {
+      "throughput": {
+        "median_MPx_per_s": 3.2877679969855085,
+        "mean_MPx_per_s": 3.245719662281028,
+        "total_per_image": {
+          "median": 0.07973311992827803,
+          "mean": 0.08076606339309364
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.07973311992827803,
+          "mean": 0.08076606339309364
+        }
+      }
+    },
+    "20": {
+      "throughput": {
+        "median_MPx_per_s": 3.6344212330021315,
+        "mean_MPx_per_s": 3.4536743832575523,
+        "total_per_image": {
+          "median": 0.07212812802754343,
+          "mean": 0.07590292856524078
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.07212812802754343,
+          "mean": 0.07590292856524078
+        }
+      }
+    },
+    "30": {
+      "throughput": {
+        "median_MPx_per_s": 3.6473081223614083,
+        "mean_MPx_per_s": 3.4910447875960866,
+        "total_per_image": {
+          "median": 0.07187328056897968,
+          "mean": 0.07509041446028278
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.07187328056897968,
+          "mean": 0.07509041446028278
+        }
+      }
+    },
+    "50": {
+      "throughput": {
+        "median_MPx_per_s": 3.6013548133602398,
+        "mean_MPx_per_s": 3.4342177761045116,
+        "total_per_image": {
+          "median": 0.0727903840597719,
+          "mean": 0.07633295763128747
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.0727903840597719,
+          "mean": 0.07633295763128747
+        }
+      }
+    },
+    "70": {
+      "throughput": {
+        "median_MPx_per_s": 4.13933067180228,
+        "mean_MPx_per_s": 3.930873550743942,
+        "total_per_image": {
+          "median": 0.06333004555199295,
+          "mean": 0.06668848453555257
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.06333004555199295,
+          "mean": 0.06668848453555257
+        }
+      }
+    },
+    "85": {
+      "throughput": {
+        "median_MPx_per_s": 4.275115522505188,
+        "mean_MPx_per_s": 4.051735196159261,
+        "total_per_image": {
+          "median": 0.06131857691798359,
+          "mean": 0.06469919363153168
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.06131857691798359,
+          "mean": 0.06469919363153168
+        }
+      }
+    },
+    "95": {
+      "throughput": {
+        "median_MPx_per_s": 6.406864852649658,
+        "mean_MPx_per_s": 5.855646249771155,
+        "total_per_image": {
+          "median": 0.04091611201874912,
+          "mean": 0.044767731659036754
+        }
+      },
+      "stages": {
+        "encode": {
+          "median": 0.04091611201874912,
+          "mean": 0.044767731659036754
+        }
+      }
+    }
+  }
+}
