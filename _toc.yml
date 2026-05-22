@@ -11,3 +11,4 @@ parts:
  - caption: Examples
    chapters:
     - file: FRAPPE
+    - file: training
